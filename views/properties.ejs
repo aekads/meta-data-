@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Properties</title>
+    
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fc;
+        }
+        h1 {
+            text-align: center;
+            padding: 20px;
+            background-color: #007bff;
+            color: white;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #e6f2ff;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        form {
+            display: inline;
+        }
+        .button-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            overflow: auto;
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 600px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* Responsive design */
+        @media only screen and (max-width: 768px) {
+            table, th, td {
+                font-size: 14px;
+            }
+            .modal-content {
+                width: 95%;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Properties</h1>
+
+    <!-- Button to Show Add Property Modal -->
+    <div class="button-container">
+        <button id="showAddForm">Add New Property</button>
+    </div>
+
+    <!-- Modal for Adding New Property -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeAddForm">&times;</span>
+            <h2>Add New Property</h2>
+            <form action="/properties/add" method="POST">
+                <label>Zone: <input type="text" name="zone" required></label>
+                <label>Locality: <input type="text" name="locality" required></label>
+                <label>Property Name: <input type="text" name="property_name" required></label>
+                <label>Pin Code: <input type="number" name="pin_code" required></label>
+                <label>Property Price Upto (in Cr): <input type="number" step="0.01" name="property_price_upto" required></label>
+                <label>Screen Size: <input type="number" name="screen_size" required></label>
+                <label>No of Towers: <input type="number" name="no_of_towers" required></label>
+                <label>No of Screens: <input type="number" name="no_of_screens" required></label>
+                <label>Captive Households (No of flats): <input type="number" name="captive_households" required></label>
+                <label>Approx Reach: <input type="number" name="approx_reach" required></label>
+                <label>Type: <input type="text" name="type" required></label>
+                <button type="submit">Add Property</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Table to Display and Edit Properties -->
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Zone</th>
+                <th>Locality</th>
+                <th>Property Name</th>
+                <th>Pin Code</th>
+                <th>Property Price (Cr)</th>
+                <th>Screen Size</th>
+                <th>No of Towers</th>
+                <th>No of Screens</th>
+                <th>Households</th>
+                <th>Approx Reach</th>
+                <th>Type</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% properties.forEach(property => { %>
+            <tr>
+                <td><%= property.property_id %></td>
+                <td><%= property.zone %></td>
+                <td><%= property.locality %></td>
+                <td><%= property.property_name %></td>
+                <td><%= property.pin_code %></td>
+                <td><%= property.property_price_upto %></td>
+                <td><%= property.screen_size %></td>
+                <td><%= property.no_of_towers %></td>
+                <td><%= property.no_of_screens %></td>
+                <td><%= property.captive_households %></td>
+                <td><%= property.approx_reach %></td>
+                <td><%= property.type %></td>
+                <td>
+                    <button class="edit-btn" data-id="<%= property.property_id %>">Edit</button>
+                    <div id="editModal<%= property.property_id %>" class="modal">
+                        <div class="modal-content">
+                            <span class="close edit-close" data-id="<%= property.property_id %>">&times;</span>
+                            <h2>Edit Property</h2>
+                            <form action="/properties/update" method="POST">
+                                <input type="hidden" name="property_id" value="<%= property.property_id %>">
+                                <label>Zone: <input type="text" name="zone" value="<%= property.zone %>" required></label>
+                                <label>Locality: <input type="text" name="locality" value="<%= property.locality %>" required></label>
+                                <label>Property Name: <input type="text" name="property_name" value="<%= property.property_name %>" required></label>
+                                <label>Pin Code: <input type="number" name="pin_code" value="<%= property.pin_code %>" required></label>
+                                <label>Property Price Upto (in Cr): <input type="number" step="0.01" name="property_price_upto" value="<%= property.property_price_upto %>" required></label>
+                                <label>Screen Size: <input type="number" name="screen_size" value="<%= property.screen_size %>" required></label>
+                                <label>No of Towers: <input type="number" name="no_of_towers" value="<%= property.no_of_towers %>" required></label>
+                                <label>No of Screens: <input type="number" name="no_of_screens" value="<%= property.no_of_screens %>" required></label>
+                                <label>Captive Households (No of flats): <input type="number" name="captive_households" value="<%= property.captive_households %>" required></label>
+                                <label>Approx Reach: <input type="number" name="approx_reach" value="<%= property.approx_reach %>" required></label>
+                                <label>Type: <input type="text" name="type" value="<%= property.type %>" required></label>
+                                <button type="submit">Update Property</button>
+                            </form>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+    <script>
+        // Function to show modal
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        // Function to hide modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Show Add Property modal
+        document.getElementById('showAddForm').addEventListener('click', function() {
+            showModal('addModal');
+        });
+
+        // Close Add Property modal
+        document.getElementById('closeAddForm').addEventListener('click', function() {
+            closeModal('addModal');
+        });
+
+        // Show Edit Property modal for each property
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const propertyId = this.getAttribute('data-id');
+                showModal(`editModal${propertyId}`);
+            });
+        });
+
+        // Close Edit Property modal for each property
+        document.querySelectorAll('.edit-close').forEach(button => {
+            button.addEventListener('click', function() {
+                const propertyId = this.getAttribute('data-id');
+                closeModal(`editModal${propertyId}`);
+            });
+        });
+
+        // Close modal when clicking outside of the content
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
